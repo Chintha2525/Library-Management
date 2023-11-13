@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Navbar from './components.js/Navbar';
+import Home from './components.js/Home';
+import Booklist from './components.js/Booklist';
+import { useEffect, useState } from 'react';
+import Addbook from './components.js/Addbook';
+import Editbook from './components.js/Editbook';
 
-function App() {
+function App({ books }) {
+
+  let [book, setBook] = useState(books);
+
+  let [editid, setEditid] = useState("");
+  
+  let [tempbook, setTempbook] = useState([...book]);
+
+  let [search, setSearch] = useState("");
+
+  useEffect(() => {
+    let filteredBooks = book.filter((b) => b.title.toLowerCase().includes(search.toLowerCase()) || b.author.toLowerCase().includes(search.toLowerCase()))
+    setTempbook(filteredBooks);
+  }, [search, book])
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container-fluid">
+      <Router>
+        <Navbar  search={search} setSearch={setSearch} />
+        <Routes>
+          <Route path='/' element={<Home />} />
+
+          <Route path='/Book-List' element={<Booklist book={book} setBook={setBook} setEditid={setEditid} tempbook={tempbook} />} />
+
+          <Route path='/Addbook' element={<Addbook book={book} setBook={setBook} />} />
+
+          <Route path='/Editbook' element={<Editbook book={book} setBook={setBook} editid={editid} />} />
+
+
+        </Routes>
+
+
+      </Router>
+
     </div>
   );
 }
